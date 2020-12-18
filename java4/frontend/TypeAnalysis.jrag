@@ -794,3 +794,49 @@ aspect Circularity {
     return false;
   }
 }
+
+aspect UnknownTypeTracking {
+  syn nta TypeDecl PrimitiveCompilationUnit.unknownNamedType(String pkg, String name) {
+    FakeType classDecl = new FakeType();
+    classDecl.setPackage(pkg);
+    classDecl.setName(name);
+    classDecl.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    classDecl.setID(name);
+    MethodDecl methodDecl = new MethodDecl(
+        new Modifiers(new List().add(
+          new Modifier("public")
+        )),
+        new PrimitiveTypeAccess(name),
+        "unknown",
+        new List(),
+        new List(),
+        new Opt()
+    );
+    classDecl.addBodyDecl(methodDecl);
+    FieldDeclarator unknown = new FieldDeclarator(
+        "unknown",
+        new List<Dims>(),
+        new Opt<Expr>());
+    FieldDecl fieldDecl = new FieldDecl(
+        new Modifiers(new List<Modifier>(new Modifier("public"))),
+        new PrimitiveTypeAccess(name),
+        new List<FieldDeclarator>(unknown)
+    );
+    classDecl.addBodyDecl(fieldDecl);
+    ConstructorDecl constrDecl = new ConstructorDecl(
+      new Modifiers(new List().add(new Modifier("public"))),
+      name,
+      new List(),
+      new List(),
+      new Opt(),
+      new Block()
+    );
+    classDecl.addBodyDecl(constrDecl);
+    return classDecl;
+  }
+
+  //  syn TypeDecl Program.unknownNamedType(String pkg, String name) = getPrimitiveCompilationUnit().unknownNamedType(pkg, name);
+
+  eq FakeType.fullName() = this.getPackage().equals("") ? this.getName() : this.getPackage() + "." + this.getName();
+  syn String FakeType.packageName() = getPackage();
+}

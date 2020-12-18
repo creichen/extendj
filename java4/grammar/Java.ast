@@ -162,6 +162,7 @@ NullType : TypeDecl;
 VoidType : TypeDecl;
 
 UnknownType : ClassDecl;
+FakeType : UnknownType ::= <Package:String> <Name:String>; // extended version of UnknownType that tracks the "bad" name
 
 // 4.2 Primitive Types and Values
 abstract NumericType : PrimitiveType;

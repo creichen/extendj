@@ -75,6 +75,9 @@ aspect SpecialClasses {
   syn lazy TypeDecl Program.unknownType() = getPrimitiveCompilationUnit().unknownType();
   eq Program.getChild().unknownType() = unknownType();
 
+  syn TypeDecl Program.unknownNamedType(String pkg, String name) = getPrimitiveCompilationUnit().unknownNamedType(pkg, name);
+  eq Program.getChild().unknownNamedType(String pkg, String name) = unknownNamedType(pkg, name);
+
   inh TypeDecl Expr.typeBoolean();
   inh TypeDecl Expr.typeByte();
   inh TypeDecl Expr.typeShort();
@@ -99,6 +102,7 @@ aspect SpecialClasses {
   inh lazy TypeDecl ThrowStmt.typeNull();
 
   inh TypeDecl Expr.unknownType();
+  inh TypeDecl Expr.unknownNamedType(String pkg, String name);
 }
 
 aspect LookupFullyQualifiedTypes {
@@ -203,11 +207,11 @@ aspect LookupFullyQualifiedTypes {
     if (sourceTypeMap.containsKey(fullName)) {
       return sourceTypeMap.get(fullName);
     } else {
-      sourceTypeMap.put(fullName, unknownType());
+      sourceTypeMap.put(fullName, unknownNamedType(packageName, typeName));
     }
 
     // Source type not found: lookup library type instead.
-    return unknownType();
+    return unknownNamedType(packageName, typeName);
   }
 
   /**
@@ -294,8 +298,9 @@ aspect LookupFullyQualifiedTypes {
     if (libraryTypeMap.containsKey(fullName)) {
       return libraryTypeMap.get(fullName);
     } else {
-      libraryTypeMap.put(fullName, unknownType());
-      return unknownType();
+      TypeDecl td = unknownNamedType(packageName, typeName);
+      libraryTypeMap.put(fullName, td);
+      return td;
     }
   }
 
@@ -715,4 +720,5 @@ aspect TypeScopePropagation {
     }
     return result;
   }
+
 }

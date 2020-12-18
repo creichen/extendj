@@ -105,6 +105,10 @@ aspect PrimitiveTypes {
   }
 
   syn nta TypeDecl PrimitiveCompilationUnit.unknownType() {
+      // try {throw new RuntimeException();} catch (Throwable e) {
+      // 	  System.err.println("replace unknownType() by unknownNamedType(pkg, name) whenever possible");
+      // 	  e.printStackTrace();
+      // }
     ClassDecl classDecl = new UnknownType();
     classDecl.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
     classDecl.setID("Unknown");
